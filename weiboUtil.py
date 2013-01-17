@@ -440,8 +440,11 @@ class weiboUtil:
 			soup = BeautifulSoup(htmlData)
 			#print soup.prettify()
 			reposts = soup.findAll(attrs={'class' : "comment_list"})
-			if len(reposts)>0 :
-				print str(len(reposts))
+			lastpage = soup.findAll(attrs={'action-type' : "feed_list_page"})
+			# print "page "+ page + "from" + len(lastpage) +"pages"
+			#if len(reposts)>0 :
+			if page < len(lastpage)+1:
+				print str(len(reposts) )+ " posts crawled"
 				for post in reposts:
 					mid  = post.get('mid')
 					if mid and mid not in self.repost.keys():
