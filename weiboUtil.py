@@ -349,10 +349,10 @@ class weiboUtil:
 							like = self.clean_content(str(post.find(attrs={'action-type' : "feed_list_like"})))
 							like = (re.findall (r'(?<=\()\d{1,}(?=\))' , like))
 							#print 'like is ' + (like and like[0] or 'empty')                            
-
+							# type(repost)
 							repost = self.clean_content(str(post.find(attrs={'action-type' : "feed_list_forward"})))
 							repost = (re.findall (r'(?<=\()\d{1,}(?=\))' , repost))
-							#print 'repost is ' + (repost and repost[0] or 'empty')
+							# print 'repost is ' + (repost and repost[0] or 'empty')
 
 							favorite = self.clean_content(str(post.find(attrs={'action-type' : "feed_list_favorite"})))
 							favorite = (re.findall (r'(?<=\()\d{1,}(?=\))' , favorite))
@@ -480,6 +480,7 @@ class weiboUtil:
 							reposturl = re.findall (r';url=+(.+?)&amp', data)[0]
 
 						if len(self.repost) < max:
+							# print [rootname, repostname, reposturl]
 							self.repost[mid] = [rootname, repostname, reposturl]
 						else:
 							return 

@@ -1,6 +1,9 @@
+# -*- coding: utf-8 -*-
+
 import weiboUtil
 import visualizationUtil
 import mongoDBUtil
+import ast
 
 class Pyweibo:
 	weiboutil = None
@@ -16,14 +19,14 @@ class Pyweibo:
 		repost = self.weiboutil.getRepost(url, level, max)
 		self.visualizationutil.generateDotFile(repost, out)
 
+	def saveRepost2Mongo(self, url, level=2, max=100):
+		repost = self.weiboutil.getRepost(url, level, max)
+		self.mongoDButil.saveData(repost, 'repost', 'post')
+
 	def getRepost(self, url, level=2, max=100):
 		return	weiboutil.getRepost(url, level, max)
 	
-#	def saveRepost2Mongo(self, url, level=2, max=100):
-#		repost = weiboutil.getRepost(url, level, max)
-#		mongoDButil.saveData(repost, 'repost')
-	
-	
+
 	#analyse the follows and fans data from weiboUtil.getFollows and weiboUtil.getFans
 	#data format will be like [{uid:*, nickname:*}, ...] a dictionary list
 	#follows_diff_fans:people who you follow doesn't follow you

@@ -18,9 +18,11 @@ class mongoDBUtil:
 	#follows or fans	
 	def saveData(self, data, database, collection):
 		weiboDB = self.conn[database]
-		for item in data:
-			weiboDB.collection.insert(item)		
-		return weiboDB.collection
+		# create collection
+		weiboData = weiboDB[collection]
+		weiboData.insert(data, safe=True)
+		print "stored in Mongo db : "+ database+", collection: "+collection
+		return weiboDB.bla
 	
 	#for now,just 2 var first
 	def analyseCollection(self, collection, args, topN=5):
@@ -64,4 +66,3 @@ class mongoDBUtil:
 			print result['_id'] , result['value']['count']
 		
 		resultCollection.drop()
-	
