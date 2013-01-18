@@ -13,18 +13,31 @@ class Pyweibo:
 	def __init__(self):
 		self.weiboutil = weiboUtil.weiboUtil()
 		self.visualizationutil = visualizationUtil.visualizationUtil()
-		self.mongoDButil = mongoDBUtil.mongoDBUtil()
+		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 
-	def generateRepostMap(self, url, level=2, max=100, out='./out/repost'):
+	def getRepost(self, url, level=2, max=100):
+		return	self.weiboutil.getRepost(url, level, max)
+
+	def generateRepostMap(self, url, level=2, max=100):
 		repost = self.weiboutil.getRepost(url, level, max)
+		
+		# print repost
+		#safer name
+		urlparts = url.split('/')
+		postname = 'post_%s_%s'%(urlparts[3],urlparts[4])
+		
+		# Write dot file
+		out='./out/'+postname
 		self.visualizationutil.generateDotFile(repost, out)
+
+		# Save data to MongoDB
+		# self.mongoDButil.saveData(repost, 'weibo', postname)
+		
 
 	def saveRepost2Mongo(self, url, level=2, max=100):
 		repost = self.weiboutil.getRepost(url, level, max)
 		self.mongoDButil.saveData(repost, 'repost', 'post')
 
-	def getRepost(self, url, level=2, max=100):
-		return	weiboutil.getRepost(url, level, max)
 	
 
 	#analyse the follows and fans data from weiboUtil.getFollows and weiboUtil.getFans

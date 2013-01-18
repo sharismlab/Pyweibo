@@ -19,26 +19,56 @@ sentimentUtil.py 这个是近期研究的 多微博的情感分析 还没完成�
 
 You should create a config file and input your weibo credentials :
 
-    cp pyweibo.cfg.copy pyweibo.cfg
+    cp settings.py.copy settings.py
     # fill username and password
 
 
-使用例子
--
+## Usage
+
+Available options
+
+    - map : create a map of reposts
+    - tag : create tag list from comments
+    - feel : create sentiment analysis report from comments
+    - graph : create a social graph (from USER PROFILE only )
+
+Read more :
+    
+    $ /bin/pyweibo -h
+
+    Usage: main.py URL [-a 'action'] [options] 
+
+      PyWeibo is a crawler and visualization tool for Sina Weibo
+
+    Options:
+      --version             show program's version number and exit
+      -h, --help            show this help message and exit
+      -a <map/graph/tag/feel>, --action=<map/graph/tag/feel>
+                            Select a way to process the data
+      -o <FILENAME>, --outputfile=<FILENAME>
+                            file to write graph info. Default: './out/graph'
+      -d, --database        select between MongoDB and Redis to store raw data
+      -g <graphtype>, --graph=<graphtype>
+                            chose Graph file type: .dot or .gdf (for Gephi).
+                            Default: .dot
+
+
+## 使用例子
+
 
     import Pyweibo
     pyweibo = Pyweibo.Pyweibo() pyweibo.analyseFollowsFansInfo('1220349643') #分析粉丝和关注者的数据
 
-#####获取单个用户的数据
+##### 获取单个用户的数据
 
     profile = pyweibo.getPersonalProfile() 
     print profile
 
-#####获取用户的微博
+##### 获取用户的微博
 
     pyweibo.getPersonalFeeds(2145291155, './data2') #获取用户的微博
 
-#####产生一个微博的转发路径图（支持多重转发）
+##### 产生一个微博的转发路径图（支持多重转发）
   
     pyweibo.generateRepostMap('http://weibo.com/1763362173/zbGgn0e8U', max=10000) 
 

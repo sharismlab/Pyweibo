@@ -1,9 +1,10 @@
 #! /usr/bin/env python
 # -*- coding: utf-8 -*-
 try:
-	import urllib
-	import urllib2
 	import sys
+	import urllib
+	import chardet
+	import urllib2
 	import time
 	import json
 	import cookielib
@@ -17,6 +18,7 @@ try:
 	from bs4 import BeautifulSoup
 	import networkx as nx
 	from ConfigParser import SafeConfigParser
+	# from lxml import etree, html
 
 except ImportError:
 	print >> sys.stderr, """\
@@ -78,7 +80,7 @@ class weiboUtil:
 
 		#config stuff
 		parser = SafeConfigParser()
-		parser.read('pyweibo.cfg')
+		parser.read('../settings.py')
 		username = parser.get('login', 'username')
 		pw = parser.get('login', 'password')
 		
@@ -415,6 +417,127 @@ class weiboUtil:
 		#think about it
 		return self.repost
 
+
+	def getRepostWorkerXML(self, url, level, first, max):
+		finished = False
+		page = 1
+		URL = ''
+
+		if len(self.repost) >= max:
+			return
+
+		while not finished: 
+			URL = url + '?type=repost&page=%d'  % page
+			print 'url is ' + URL
+			page = page + 1
+			repostPageage = urllib2.urlopen(URL).read()
+			#raw = html.parse(URL)
+
+			# self.writefile('repostPage', repostPageage)	
+			
+			# get repostHtml
+			# content = raw.xpath()
+
+			content = repostPageage.partition('{\"pid\":\"pl_content_weiboDetail\"')  
+			jsonData = content[2].partition(')</script>')[0]
+			jsonData = content[1] + jsonData
+			
+			raw = json.loads(jsonData)['html']
+
+			# hparser = etree.HTMLParser(encoding='utf-8')
+			# parser = etree.HTMLParser(encoding='utf-8')
+			# encoding = chardet.detect(raw)['encoding']
+			# if encoding != 'utf-8':
+			#     raw = raw.decode(encoding, 'replace').encode('utf-8')
+			tree   = html.fromstring(raw)
+			# print tree
+			# htree = etree.fromstring(raw)
+			# print raw			
+			# # print jsonData
+			# self.writefile('repostHtml', htmlData)
+			# allcomments = SoupStrainer('div',{'class' : "comment_lists"})
+
+			# soup = BeautifulSoup(htmlData)
+			#print soup.prettify()
+			# print html.tostring(raw)
+
+			# print raw
+			reposts = tree.xpath("//dl[contains(@class,'comment_list')]")
+			# print reposts
+
+			lastpage = tree.xpath("//a[contains(@action-type,'feed_list_page')][last()]")
+			lastpage = int(lastpage[0].text_content())
+			# print etree.tostring(lastpage[0])
+			# print lastpage
+			# reposts = soup.findAll(attrs={'class' : "comment_list"})
+			# lastpage = soup.findAll(attrs={'action-type' : "feed_list_page"})
+			# print "page "+ page + "from" + len(lastpage) +"pages"
+			#if len(reposts)>0 :
+
+			if page < lastpage+2:
+				print "Page "+ str(page-1) +" of " + str(lastpage)
+				print str(len(reposts) )+ " posts crawled"
+				for post in reposts:
+					# print len(post)
+					mid = post.attrib["mid"]
+					post_str = etree.tostring(post, encoding="UTF-8")
+					# print post_str
+
+					if mid and mid not in self.repost.keys():
+						if mid == '3524300160600436' or mid == '3524287568904991' or mid == '3523632087162421' or mid == '3523630430176725': 
+							print 'yes'
+
+						# content = post.find('em')
+						em = post.xpath("//em[contains(@class,'hover')]")
+						content = etree.tostring(em[0], encoding="UTF-8")
+						realcontent = self.clean_content(str(content))
+
+						# data =  str(post.find("a",{'action-type' : "feed_list_forward"}))	
+						link = post.xpath("//a[contains(@action-type,'feed_list_forward')]")
+						data =  etree.tostring(link[0], encoding="UTF-8", method="html")
+						print data
+
+						#rootmid = re.findall(r'rootmid=+(\d+)&amp', data)[0] #equal mid may not need
+						#rootuid = re.findall(r'rootuid=+(\d+)+&amp', data)[0]
+						#rooturl = re.findall(r'rooturl=+(.+?)&amp', data)[0] #equal URL may not need			
+						#repostmid = re.findall(r';mid=+(\d+)+&amp', data)[0]
+						#repostuid = re.findall(r';uid=+(\d+)&amp', data)[0]
+						# em = post.xpath("//a[contains(@action-type,'feed_list_forward')]")
+						# print etree.tostring(em[0]))
+						haslink = em[0].xpath("//a")
+
+						if haslink:
+							if len(re.findall(r'href=', str(content))) > level:
+								continue
+							else:
+								repostname = re.findall(r'nick-name=\"+(.+?)\"', str(post_str))[0]
+								if re.findall(r'>@+(.+?)<', str(content)):
+									rootname = re.findall(r'>@+(.+?)<', str(content))[0]
+								else:
+									rootname = re.findall(r'rootname=+(.+?)&amp', data)[0]
+								reposturl = re.findall (r';url=+(.+?)&amp', data)[0]
+
+						elif first:
+							rootname = re.findall(r'rootname=+(.+?)&amp', data)[0]
+							repostname = re.findall(r';name=+(.+?)&amp', data)[0]
+							reposturl = re.findall (r';url=+(.+?)&amp', data)[0]			    
+
+						else:
+							repostname = re.findall(r';name=+(.+?)&amp', data)[0]
+							reposturl = re.findall (r';url=+(.+?)&amp', data)[0]
+
+						if len(self.repost) < max:
+							# print [rootname, repostname, reposturl]
+							self.repost[mid] = [rootname, repostname, reposturl]
+						else:
+							return 
+
+			else:
+				finished = True
+
+		return 
+
+
 	def getRepostWorker(self, url, level, first, max):
 		finished = False
 		page = 1
@@ -428,14 +551,21 @@ class weiboUtil:
 			print 'url is ' + URL
 			page = page + 1
 			repostPageage = urllib2.urlopen(URL).read()
-			self.writefile('repostPage', repostPageage)	
-			#get repostHtml
+
+			# self.writefile('repostPage', repostPageage)	
+			
+			# # get repostHtml
 			content = repostPageage.partition('{\"pid\":\"pl_content_weiboDetail\"')  
+			# print content
+
 			jsonData = content[2].partition(')</script>')[0]
+			print content[2]
 			jsonData = content[1] + jsonData
-			#print jsonData
 			htmlData = json.loads(jsonData)['html']
-			self.writefile('repostHtml', htmlData)
+			
+			# # print jsonData
+			# self.writefile('repostHtml', htmlData)
+			# allcomments = SoupStrainer('div',{'class' : "comment_lists"})
 
 			soup = BeautifulSoup(htmlData)
 			#print soup.prettify()
@@ -489,6 +619,7 @@ class weiboUtil:
 				finished = True
 
 		return 
+
 
 	def clean_content(self, content):
 

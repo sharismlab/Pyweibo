@@ -24,7 +24,7 @@ class visualizationUtil:
 			#add notedata
 			f.write('edgedef>node1 VARCHAR,node2 VARCHAR\n')
 			#add edgedata
-			print 'dot file export'	
+			print 'gdf file export'	
 
 	#just generate TagCloud File,and open with webbrowser,
 	#because generate tagcloud image file directly is too complicate :(
