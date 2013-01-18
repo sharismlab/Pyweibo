@@ -414,7 +414,6 @@ class weiboUtil:
 		#think about it
 		return self.repost
 
-
 	def getRepostWorkerXML(self, url, level, first, max):
 		finished = False
 		page = 1
@@ -534,7 +533,6 @@ class weiboUtil:
 
 		return 
 
-
 	def getRepostWorker(self, url, level, first, max):
 		finished = False
 		page = 1
@@ -617,7 +615,6 @@ class weiboUtil:
 
 		return 
 
-
 	def clean_content(self, content):
 
 		content = re.sub("<img src=[^>]* alt=\"", "", content)
@@ -642,7 +639,6 @@ class weiboUtil:
 			f.write(i[1])
 
 		f.close()		
-
 
 	def getFollows(self, uid):
 		followItems = []
