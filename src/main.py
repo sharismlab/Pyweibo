@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from optparse import OptionParser
-
+import Pyweibo
 
 desc="""
 
@@ -54,3 +54,5 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
