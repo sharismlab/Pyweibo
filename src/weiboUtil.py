@@ -16,7 +16,7 @@ try:
 	import webbrowser
 	from bs4 import BeautifulSoup
 	import networkx as nx
-	from ConfigParser import SafeConfigParser
+	from ConfigParser import ConfigParser
 	# from lxml import etree, html
 
 except ImportError:
@@ -76,12 +76,13 @@ class weiboUtil:
 		print 'login'
 
 		#config stuff
-		parser = SafeConfigParser()
-		parser.read('../settings.py')
-		username = parser.get('login', 'username')
-		pw = parser.get('login', 'password')
+		config = ConfigParser()
+		config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
+		# config.read('../settings.cfg')
+		username = config.get('login', 'username')
+		pw = config.get('login', 'password')
 		
-		print parser.get('login', 'username')
+		print config.get('login', 'username')
 
 		self.login(username, pw)
 

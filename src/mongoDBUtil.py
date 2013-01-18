@@ -12,10 +12,10 @@ class mongoDBUtil:
 	def __init__(self):
 		
 		#config stuff
-		parser = SafeConfigParser()
-		parser.read('../settings.py')
-		host = parser.get('mongo', 'host')
-		port = parser.get('mongo', 'port')
+		config = SafeConfigParser()
+		config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
+		host = config.get('mongo', 'host')
+		port = config.get('mongo', 'port')
 
 		try:
 			self.conn = Connection(host, port)

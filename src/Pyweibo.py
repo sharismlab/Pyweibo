@@ -13,8 +13,8 @@ class Pyweibo:
 
 	def __init__(self):
 		print "Init Pyweibo"
-		# self.weiboutil = weiboUtil.weiboUtil()
-		# self.visualizationutil = visualizationUtil.visualizationUtil()
+		self.weiboutil = weiboUtil.weiboUtil()
+		self.visualizationutil = visualizationUtil.visualizationUtil()
 		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 
 	def getRepost(self, url, level=2, max=100):
