@@ -13,7 +13,6 @@ try:
 	import os
 	import string
 	import re
-	import jieba 
 	import webbrowser
 	from bs4 import BeautifulSoup
 	import networkx as nx
@@ -39,11 +38,11 @@ which is:
 """ % (sys.exc_value, sys.version)
 	sys.exit(1)
 
-
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
 class weiboUtil:
+
 	#login stuff
 	cj = cookielib.LWPCookieJar()
 	cookie_support = urllib2.HTTPCookieProcessor(cj)
@@ -72,8 +71,6 @@ class weiboUtil:
 	#profile feed stuff
 	charset = 'utf8'
 	repost = {}
-
-	
 
 	def __init__(self):
 		print 'login'
@@ -646,32 +643,6 @@ class weiboUtil:
 
 		f.close()		
 
-	def getKeyword(self, sentence, topK=20):
-		content = open('idf.txt', 'rb').read().decode('utf-8')
-		idf_freq = {}
-		lines = content.split('\n')
-		for line in lines:
-			word,freq = line.split(' ')
-			idf_freq[word] = float(freq)
-		max_idf = max(idf_freq.values())	
-
-		words = jieba.cut(sentence)
-		freq = {}
-		for w in words:
-			if len(w.strip())<2: continue
-			freq[w]=freq.get(w,0.0)+1.0
-		total = sum(freq.values())
-		freq = [(k,v/total) for k,v in freq.iteritems()]
-
-		tf_idf_list = [(v * idf_freq.get(k, max_idf),k) for k,v in freq]
-		#or wo treat it unknowitem as 0?
-		#tf_idf_list = [(v * idf_freq.get(k, max_idf),k) for k,v in freq]
-		st_list = sorted(tf_idf_list,reverse=True)
-
-		top_tuples= st_list[:topK]
-		#tags = [a[1] for a in top_tuples]
-
-		return top_tuples	
 
 	def getFollows(self, uid):
 		followItems = []
@@ -734,5 +705,3 @@ class weiboUtil:
 				finished = True	
 				
 		return fans
-
-

@@ -6,13 +6,15 @@ import mongoDBUtil
 import ast
 
 class Pyweibo:
+
 	weiboutil = None
 	visualizationutil = None
 	mongoDButil = None
 
 	def __init__(self):
-		self.weiboutil = weiboUtil.weiboUtil()
-		self.visualizationutil = visualizationUtil.visualizationUtil()
+		print "Init Pyweibo"
+		# self.weiboutil = weiboUtil.weiboUtil()
+		# self.visualizationutil = visualizationUtil.visualizationUtil()
 		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 
 	def getRepost(self, url, level=2, max=100):

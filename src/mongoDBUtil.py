@@ -2,16 +2,25 @@ import sys
 
 from pymongo.errors import ConnectionFailure
 from pymongo import Connection
+from ConfigParser import SafeConfigParser
 #from pymongo.son_manipulator import AutoReference,NamespaceInjector
 #from pymongo.code import Code
 
 class mongoDBUtil:
 	conn = None
+
 	def __init__(self):
+		
+		#config stuff
+		parser = SafeConfigParser()
+		parser.read('../settings.py')
+		host = parser.get('mongo', 'host')
+		port = parser.get('mongo', 'port')
+
 		try:
-			self.conn = Connection('localhost', 27017)
+			self.conn = Connection(host, port)
 		except ConnectionFailure:
-			print 'not connect mongodb on localhost:27017'
+			print 'not connect mongodb on %s :%s'%(host,port)
 			print 'connect fail...'
 			sys.exit(1)
 	
