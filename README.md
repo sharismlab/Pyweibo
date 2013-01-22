@@ -7,14 +7,14 @@ Main features are :
 * API
 * Crawler
 * Store data to Mongo
-* Generate graph files from discussions (.dot and Gephi .gdt)
+* Generate graph files (.dot and Gephi .gdt)
 * Text mining and keyword extraction
 * Sentiment analysis (to do)
 
 
 ## Usage
 
-  python pyweibo.py [ arguments ]  
+    python pyweibo.py [ arguments ]  
 
 Command details are available using help
     
@@ -23,7 +23,7 @@ Command details are available using help
 
 You can also use use the bash wrapper on Linux system
 
-  $ /bin/pyweibo
+    $ /bin/pyweibo
 
 
 ## Install
