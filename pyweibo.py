@@ -7,8 +7,8 @@ from ConfigParser import SafeConfigParser
 
 # sys.path.append(os.path.split(sys.argv[0])[0])
 
-import crawl.Pyweibo as Pyweibo
-import api.WeiboAPI as WeiboAPI
+import lib.Pyweibo as Pyweibo
+import lib.api.WeiboAPI as WeiboAPI
 
 # from . import token
 # from api import token
@@ -171,6 +171,8 @@ def main():
         pyapi.token()
         # PyApi.token()
 
+      
+
 
       else:
         print "Unknown actions. Please check -a value."  
@@ -192,6 +194,3 @@ def nameFile(filename,extension):
   tmp = "_".join([filename, suffix])
   name = host+tmp
   return name
-
-
-

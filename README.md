@@ -1,21 +1,32 @@
 # Pyweibo
 
+PyWeibo is a tool for Sina Weibo data extraction, mining and visualization. 
 
-这是我关于新浪微博的python函数
+Main features are :
 
-主要是获取新浪微博的一些数据，例如转发数，评论数，微博用户的各种数据，以便以后的数据 挖掘之用，没有用到微博官方的api，因为我觉得官方的api限制太蛋疼，感觉很不爽
+* API
+* Crawler
+* Store data to Mongo
+* Generate graph files from discussions (.dot and Gephi .gdt)
+* Text mining and keyword extraction
+* Sentiment analysis (to do)
 
-文件介绍： 带Util后缀的都是基本功能类，为Pyweibo调用，而用户自己写的函数就直接和Pyweibo这个类交互 就行了
 
-如 weiboUtil.py 是去获取微博数据的基本类，如登录，获取用户数据等 visualizationUtil.py 是数据可视化的类，例如 可以生成可以用可视化软件Gephi打开的dot可是文件 redisUtil.py 和 mongoDBUtil.py 是文档型数据库的功能类，当文件很大或者分析用时 选择调用（不过 很多功能还没实现哦）
+## Usage
 
-还有其他的组件 例如轻量级的mapreduce，这个以后慢慢研究使用
+  python pyweibo.py [ arguments ]  
 
-sentimentUtil.py 这个是近期研究的 多微博的情感分析 还没完成哦
+Command details are available using help
+    
+    python pyweibo.py -h
+
+
+You can also use use the bash wrapper on Linux system
+
+  $ /bin/pyweibo
+
 
 ## Install
-
-    pip install jieba BeautifulSoup4 mongopy
 
 You should create a config file and input your weibo credentials :
 
@@ -23,35 +34,19 @@ You should create a config file and input your weibo credentials :
     # fill username and password
 
 
-## Usage
+## Notes
 
-Available options
+这是我关于新浪微博的python函数
 
-    - map : create a map of reposts
-    - tag : create tag list from comments
-    - feel : create sentiment analysis report from comments
-    - graph : create a social graph (from USER PROFILE only )
+主要是获取新浪微博的一些数据，例如转发数，评论数，微博用户的各种数据，以便以后的数据 挖掘之用，没有用到微博官方的api，因为我觉得官方的api限制太蛋疼，感觉很不爽
 
-Read more :
-    
-    $ /bin/pyweibo -h
+文件介绍： 带Util后缀的都是基本功能类，为Pyweibo调用，而用户自己写的函数就直接和Pyweibo这个类交互 就行了
 
-    Usage: main.py URL [-a 'action'] [options] 
+如 weiboCrawler.py 是去获取微博数据的基本类，如登录，获取用户数据等 visualizationUtil.py 是数据可视化的类，例如 可以生成可以用可视化软件Gephi打开的dot可是文件 redisUtil.py 和 mongoDBUtil.py 是文档型数据库的功能类，当文件很大或者分析用时 选择调用（不过 很多功能还没实现哦）
 
-      PyWeibo is a crawler and visualization tool for Sina Weibo
+还有其他的组件 例如轻量级的mapreduce，这个以后慢慢研究使用
 
-    Options:
-      --version             show program's version number and exit
-      -h, --help            show this help message and exit
-      -a <map/graph/tag/feel>, --action=<map/graph/tag/feel>
-                            Select a way to process the data
-      -o <FILENAME>, --outputfile=<FILENAME>
-                            file to write graph info. Default: './out/graph'
-      -d, --database        select between MongoDB and Redis to store raw data
-      -g <graphtype>, --graph=<graphtype>
-                            chose Graph file type: .dot or .gdf (for Gephi).
-                            Default: .dot
-
+sentimentUtil.py 这个是近期研究的 多微博的情感分析 还没完成哦
 
 ## 使用例子
 

@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-import weiboUtil
+import weiboCrawler
 import visualizationUtil
 import mongoDBUtil
 import ast
@@ -13,11 +13,11 @@ class Pyweibo:
 
 	def __init__(self):
 		print "Init Pyweibo"
-		self.weiboutil = weiboUtil.weiboUtil()
+		self.weiboutil = weiboCrawler.weiboCrawler()
 		self.visualizationutil = visualizationUtil.visualizationUtil()
 		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 
-	def getRepost(self, url, level=2, max=100):
+	def crawlRepost(self, url, level=2, max=100):
 		return	self.weiboutil.getRepost(url, level, max)
 
 	def generateRepostMap(self, url, level=2, max=100):
