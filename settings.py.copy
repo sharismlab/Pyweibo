@@ -6,3 +6,8 @@ password = ************
 [mongo]
 host = 'localhost'
 port = 27017
+
+[api]
+key=
+secret=
+callback=

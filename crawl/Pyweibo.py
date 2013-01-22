@@ -24,7 +24,7 @@ class Pyweibo:
 		repost = self.weiboutil.getRepost(url, level, max)
 		
 		# print repost
-		#safer name
+		# safer name
 		urlparts = url.split('/')
 		postname = 'post_%s_%s'%(urlparts[3],urlparts[4])
 		
