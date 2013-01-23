@@ -3,6 +3,8 @@
 
 import sys, os, urllib, urllib2
 import csv, io
+import fileinput
+import getpass
 import pickle
 from api.weibo import APIClient # api from:http://michaelliao.github.com/sinaweibopy/
 from api.http_helper import *
@@ -23,7 +25,6 @@ default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
     reload(sys)
     sys.setdefaultencoding(default_encoding)
-
 
 
 class weiboApi:
@@ -52,8 +53,9 @@ class weiboApi:
         # print access_token_file_path
         self.client = APIClient(app_key=self.APP_KEY, app_secret=self.APP_SECRET, redirect_uri=self.CALLBACK_URL)
 
-    def make_access_token(self):
+    def make_access_token(self,username, password):
         '''请求access token'''
+
         params = urllib.urlencode({'action':'submit','withOfficalFlag':'0','ticket':'','isLoginSina':'', \
             'response_type':'code', \
             'regCallback':'', \
@@ -61,8 +63,8 @@ class weiboApi:
             'client_id':self.APP_KEY, \
             'state':'', \
             'from':'', \
-            'userId':self.USERID, \
-            'passwd':self.USERPASSWD, \
+            'userId':username, \
+            'passwd':password, \
             })
 
         login_url = 'https://api.weibo.com/oauth2/authorize'
@@ -85,40 +87,73 @@ class weiboApi:
             code = return_callback_url.split('=')[1]
         #得到token
         token = self.client.request_access_token(code)
-        self.save_access_token(token)
+        self.save_access_token(username,token)
 
-    def save_access_token(self,token):
+    def save_access_token(self,username,token):
         '''将access token保存到本地'''
-        f = open(self.access_token_file_path, 'w')
-        f.write(token['access_token']+' ' + str(token['expires_in']))
-        f.close()
+
+        exists = False
+        done = False
+        # f = open(self.access_token_file_path, 'r+')
+        # for line in f:
+
+        for line in fileinput.input(self.access_token_file_path, inplace=1):
+            if username in line:
+                exists = True
+                print( username+' '+token['access_token']+' ' + str(token['expires_in']) )
+            else:
+                continue
+        # done =True
+
+        # print exists
+        # print done
+        
+        # if exists == False:
+        #     with open(self.access_token_file_path, 'a') as f:
+        #         f.write(username+' '+token['access_token']+' ' + str(token['expires_in']))
+        #         f.close()
 
     @retry(1)
-    def apply_access_token(self):
+    def apply_access_token(self,username, password):
         '''从本地读取及设置access token'''
         try:
-            token = open(access_token_file_path, 'r').read().split()
-            if len(token) != 2:
-                self.make_access_token()
-                return False
-            # 过期验证
-            access_token, expires_in = token
-            try:
-                self.client.set_access_token(access_token, expires_in)
-            except StandardError, e:
-                if hasattr(e, 'error'): 
-                    if e.error == 'expired_token':
-                        # token过期重新生成
-                        self.make_access_token()
+            #loop to each line
+            for line in open(access_token_file_path, 'r').readlines():
+                #check if the username has already been added
+                if username in line:
+                    token =line.split()
+                    
+                    if len(token) != 3: #if size problem, make new one
+                        self.make_access_token(username, password)
+                        return False
+                    
+                    # 过期验证
+                    usname, access_token, expires_in = token
+                    try:
+                        self.client.set_access_token(access_token, expires_in)
+                    except StandardError, e:
+                        if hasattr(e, 'error'): 
+                            if e.error == 'expired_token':
+                                # token过期重新生成
+                                self.make_access_token(username, password)
+                        else:
+                            pass
                 else:
                     pass
         except:
-            self.make_access_token()
+            self.make_access_token(username, password)
         
         return False
 
     def create_token(self):
-        self.apply_access_token()
+
+        print('Please input Sina Weibo credentials:')
+        username = raw_input("Username (email) :")
+        password = getpass.getpass("Password :")
+        # print (username, password)
+
+        self.apply_access_token(username, password)
+
         print "You're token is stored in "+self.access_token_file_path
 
         # 以下为访问微博api的应用逻辑
