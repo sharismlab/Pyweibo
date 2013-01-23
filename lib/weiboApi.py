@@ -152,20 +152,20 @@ class weiboApi:
 
     def toFile(self, JSONOBJ, fileName, path, format):
 
-        filePath=path+os.sep+fileName
+        filePath=path+os.sep+fileName+"."+format
         if os.path.exists(filePath):
             print (fileName+" already exists. 文件已经存在，请指定其他文件夹")
             return
         else:
             if format == 'csv':
             # CSV
-                w = csv.writer(open(filePath+os.sep+fileName, "w"))
+                w = csv.writer(open(filePath, "w"))
                 for key, val in JSONOBJ.items():
                     w.writerow([key, val])
             
             elif format == 'pickle':
             # Serialized
-                pickle.dump(JSONOBJ, open(filePath+os.sep+fileName,'w'))
+                pickle.dump(JSONOBJ, open(filePath,'w'))
 
             elif format == "json":
             # JSON 
@@ -198,14 +198,14 @@ class weiboApi:
                         break
 
     # 
-    def maxpage(self, perpage):
-        firstpage = self.result(1)
+    def maxpage(self, command, uid, perpage):
+        firstpage = self.result(command,uid,1)
         print firstpage
         total_number = firstpage['total_number']
         print total_number,' total_number'
         return (total_number/perpage) if (total_number%perpage==0) else (total_number/perpage+1)
 
-    def mainLoop(self, path, format ):
+    def mainLoop(self, command, uid, path, format ):
         maxPages = 0
         tokenArray= self.read_tokens()
 
@@ -224,8 +224,12 @@ class weiboApi:
         token = tokenArray[0]
         self.setToken(token)
         
+        # get basic data about the post
+        print("retrieve post info from API")
+        self.getPost(uid, path, format)
+
         # Count maximum pages to retrieve
-        maxPages = self.maxpage(30) # 30 items per page
+        maxPages = self.maxpage(command,uid, 50) # 50 items per page
         print maxPages,"pages to retrieve"
         
         index = 0
@@ -236,11 +240,11 @@ class weiboApi:
             if self.remainHit()>0: # check rate limit
                 while maxPages > 0: # check page number
                     if self.remainHit()>0:
-                        JSONOBJ = self.result(maxPages)
+                        JSONOBJ = self.result(command,uid,maxPages)
                         type(JSONOBJ)
                         print maxPages
                         maxPages = maxPages-1
-                        self.toFile(JSONOBJ,str(maxPages), path, format)
+                        self.toFile(JSONOBJ,command+"_"+str(maxPages), path, format)
                     else:
                         if index==len(tokenArray)-1:
                             self.toSleep()
@@ -252,9 +256,33 @@ class weiboApi:
                 index = index+maxPages-1
 
     # API requests
-    def result(self,page):
-        #api request goes there
-        re = self.client.comments__show(id="3537373410886268", page=page, count=30)
+
+
+    def result(self,command,uid, page):
+        # Api requests goes there
+        re = None
+
+        if command == "coms":
+            # GET comments/show
+            re = self.client.comments__show(id=uid, page=page, count=50)
+
+        elif command == "RT":
+             # GET statuses/reposts
+            re = self.client.statuses__repost_timeline(id=uid, page=page, count=50)
+
+        else:
+            raise Exception("This is not a valid weibo API command")
+
+        return re
+
+        
+
+    # GET statuses/show
+    # Get basic info on a post from API
+    def getPost(self, uid, path, format):
+        print uid
+        re = self.client.statuses__show(id=uid)
+        self.toFile(re, "statuses__show_"+uid, path, format)
         return re
 
     # def place__nearby_timeline(lat, lon, start, end, page, count=30, rang=2000):

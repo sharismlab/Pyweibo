@@ -23,9 +23,16 @@ Command details are available using help
 
 ### Examples
 
-Retrieve all comments from an URL
+Retrieve all comments from a post URL
 
-    python pyweibo.py api -a comments -u http://www.weibo.com/1701401324/zeoBquVKi
+    python pyweibo.py api -a coms -u http://www.weibo.com/2820349024/zfGX5f0bN
+
+
+Retrieve all reposts from a post URL
+
+    python pyweibo.py api -a RT -u http://www.weibo.com/2820349024/zfGX5f0bN
+
+
 
 
 You can also use use the bash wrapper on Linux system

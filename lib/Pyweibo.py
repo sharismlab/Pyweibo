@@ -25,17 +25,21 @@ class Pyweibo:
 		self.crawler = weiboCrawler.weiboCrawler()
 		return self.crawler.getIdFromUrl(url)
 
-	
+
 	# API
 	def getToken(self):
 		self.weiboapi  = weiboApi.weiboApi()
 		self.weiboapi.create_token()
 		return
 
-	def getComments(self, uid, path, format):
+	def getPostData(self, command, uid, path, format):
+
 		self.weiboapi  = weiboApi.weiboApi()
-		self.weiboapi.read_tokens()
-		self.weiboapi.mainLoop(path, format)
+		# self.weiboapi.read_tokens()
+
+		self.weiboapi.mainLoop(command, uid, path, format)
+
+
         
 	# Crawler
 	def crawlRepost(self, url, level=2, max=100):

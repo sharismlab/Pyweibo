@@ -14,7 +14,7 @@ config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
 def main():
     desc ="PyWeibo is a crawler and visualization tool for Sina Weibo"
     usage="""
-        pyweibo <crawl / api> [-a 'action'] [-a 'URL'] [options] 
+        pyweibo <crawl / api> [-a 'action'] [-u 'URL'] [options] 
         """
     parser = ArgumentParser(usage=usage, version=" 0.1", description=desc)
 
@@ -26,7 +26,7 @@ def main():
                       help='Select a way to process the data', 
                       dest='action', 
                       action='store',
-                      metavar='<map/graph/tag/feel>',
+                      metavar='<coms/RT/map/graph/tag/feel>',
                       required=True)
 
     parser.add_argument('-u', "--url", 
@@ -156,26 +156,24 @@ def main():
 
         # PyApi.token()
 
-      if args.action=="comments":
-        # url = "http://www.weibo.com/1701401324/zeoBquVKi" # huge stuff
-        # url = "http://www.weibo.com/2093659437/zfGfH3IyE" # medium size
-        # url = 'http://e.weibo.com/1930665641/zeVxsoiyB' #little thing
+      if args.action=="coms" or args.action=="RT":
+
         if args.url:
           url = args.url
 
           # get post ID from url
           postId = pyweibo.getPostIdFromUrl(url)
-          print postId
-          # postId="3537373410886268"
+          # print postId
 
           # get comments data
           format= "json"
           filename= nameFile('post_%s'%(postId), format)
 
           # print filename
-          pyweibo.getComments(postId, filename, format)
+          pyweibo.getPostData(args.action, postId, filename, format)
 
         else:
+
           parser.error( 'You should input an URL to map using -u <URL>')
         # 
 
