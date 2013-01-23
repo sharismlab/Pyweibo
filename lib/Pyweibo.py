@@ -17,39 +17,39 @@ class Pyweibo:
 	def __init__(self):
 		print "Init Pyweibo"
 
-		# self.weiboutil = weiboCrawler.weiboCrawler()
+		# self.weibocrawler = weiboCrawler.weiboCrawler()
 		# self.visualizationutil = visualizationUtil.visualizationUtil()
 		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 	
+
+	# Crawler utils
 	def getPostIdFromUrl(self, url):
 		self.crawler = weiboCrawler.weiboCrawler()
 		return self.crawler.getIdFromUrl(url)
 
-
-	# API
+	# API tasks
 	def getToken(self):
 		self.weiboapi  = weiboApi.weiboApi()
 		self.weiboapi.create_token()
 		return
 
 	def getPostData(self, command, uid, path, format):
-
 		self.weiboapi  = weiboApi.weiboApi()
 		# self.weiboapi.read_tokens()
-
 		self.weiboapi.mainLoop(command, uid, path, format)
 
-
-        
+    
 	# Crawler
 	def crawlRepost(self, url, level=2, max=100):
-		return	self.weiboutil.getRepost(url, level, max)
+		return	self.weibocrawler.getRepost(url, level, max)
 
 	def generateRepostMap(self, url, level=2, max=100):
-		repost = self.weiboutil.getRepost(url, level, max)
+		self.weibocrawler = weiboCrawler.weiboCrawler()
+		self.visualizationutil = visualizationUtil.visualizationUtil()
+
+		repost = self.weibocrawler.getRepost(url, level, max)
 		
 		# print repost
-		# safer name
 		urlparts = url.split('/')
 		postname = 'post_%s_%s'%(urlparts[3],urlparts[4])
 		
@@ -62,10 +62,10 @@ class Pyweibo:
 		
 
 	def saveRepost2Mongo(self, url, level=2, max=100):
-		repost = self.weiboutil.getRepost(url, level, max)
+		repost = self.weibocrawler.getRepost(url, level, max)
 		self.mongoDButil.saveData(repost, 'repost', 'post')
 
-	#analyse the follows and fans data from weiboUtil.getFollows and weiboUtil.getFans
+	#analyse the follows and fans data from weibocrawler.getFollows and weibocrawler.getFans
 	#data format will be like [{uid:*, nickname:*}, ...] a dictionary list
 	#follows_diff_fans:people who you follow doesn't follow you
 	#fans_diff_follows:people who following you but you don't follow
@@ -77,14 +77,14 @@ class Pyweibo:
 	#topN of fans(follows)'s company(all? male? female)
 	#...
 	def analyseFollowsFansInfo(self, uid, F='follow'):
-		follows = self.weiboutil.getFollows(uid)
-		fans = self.weiboutil.getFans(uid)
+		follows = self.weibocrawler.getFollows(uid)
+		fans = self.weibocrawler.getFans(uid)
 		#add to do:uid to dic
 		if F is 'follow':
-			profiles = [self.weiboutil.getPersonalProfile(uid) for uid in follows]
+			profiles = [self.weibocrawler.getPersonalProfile(uid) for uid in follows]
 			collection = mongoDButil.saveData(profiles, 'follows', uid)
 		elif F is 'fan':
-			profiles = [self.weiboutil.getPersonalProfile(uid) for uid in fans]
+			profiles = [self.weibocrawler.getPersonalProfile(uid) for uid in fans]
 			collection = mongoDButil.saveData(profiles, 'fans', uid)
 		
 		#top5 of fans(follows)'s company in male
@@ -107,7 +107,7 @@ class Pyweibo:
 		return
 	
 	def getPersonalProfile(self, uid):
-		self.weiboutil.getPersonalProfile(uid)
+		self.weibocrawler.getPersonalProfile(uid)
 	
 	#todo
 	#beside get a person's profile, we can get a lot of

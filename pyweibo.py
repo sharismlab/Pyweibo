@@ -125,18 +125,19 @@ def main():
     # CRAWLER ACTION    
     if args.method == "crawl":
 
+      pyweibo = Pyweibo.Pyweibo() # init
 
       if args.action=="map":
-          print "You asked for a repost map of %s"%(args.URL)
+          print "You asked for a repost map of %s"%(args.url)
           
-          crawler.generateRepostMap(args.URL, level, maxposts)
+          pyweibo.generateRepostMap(args.url, level, maxposts)
           # print(pyweibo)
 
       elif args.action=="tag":
-          print "You asked for a report comments of %s"%(args.URL)
+          print "You asked for a report comments of %s"%(args.url)
 
       elif args.action=="map":
-          print "You asked for a social graph of profile %s"%(args.URL)
+          print "You asked for a social graph of profile %s"%(args.url)
 
       elif args.action=="feel":
           print "You asked for a sentiment analysis"

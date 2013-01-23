@@ -41,9 +41,14 @@ Retrieve all reposts from a post URL
     python pyweibo.py api -a RT -u http://www.weibo.com/2820349024/zfGX5f0bN
 
 
+Generate repost graph file from a post URL
+
+    python pyweibo.py crawl -a map -u http://www.weibo.com/2820349024/zfGX5f0bN
+
+
 You can also use use the bash wrapper on Linux system
 
-    $ /bin/pyweibo
+    $ ./bin/pyweibo
 
 
 ## Notes
