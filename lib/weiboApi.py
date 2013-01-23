@@ -46,7 +46,7 @@ class weiboApi:
 
         # token file path
         save_access_token_file  = 'access_token.txt'
-        file_path = os.path.dirname(os.path.abspath(__file__)) + os.path.sep
+        file_path = os.path.dirname(os.path.abspath(__file__)) + os.path.sep + "api" + os.path.sep
         self.access_token_file_path = file_path + save_access_token_file
 
         # print access_token_file_path
@@ -118,13 +118,15 @@ class weiboApi:
         return False
 
     def create_token(self):
-        print "ok ok"
         self.apply_access_token()
+        print "You're token is stored in "+self.access_token_file_path
 
         # 以下为访问微博api的应用逻辑
         # 以接口访问状态为例
-        status = self.client.get.account__rate_limit_status()
-        print json.dumps(status)
+        # token =
+        # setToken(token)
+        # status = self.client.get.account__rate_limit_status()
+        # print json.dumps(status)
 
     def read_tokens(self):
         tokens  = [line.split() for line in open(self.access_token_file_path, 'r')]

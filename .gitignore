@@ -168,5 +168,5 @@ pip-log.txt
 ####
 
 settings.py
-src/api/access_token.txt
+lib/api/access_token.txt
 out/*

@@ -20,6 +20,14 @@ Command details are available using help
     
     python pyweibo.py -h
 
+You should create a config file and input your weibo credentials
+
+    cp settings.py.copy settings.py
+
+To use Weibo API, you will need first to generate your token. The token will be stored in lib/api/access_token.txt
+
+    python pyweibo.py api -a token
+
 
 ### Examples
 
@@ -33,19 +41,9 @@ Retrieve all reposts from a post URL
     python pyweibo.py api -a RT -u http://www.weibo.com/2820349024/zfGX5f0bN
 
 
-
-
 You can also use use the bash wrapper on Linux system
 
     $ /bin/pyweibo
-
-
-## Install
-
-You should create a config file and input your weibo credentials :
-
-    cp settings.py.copy settings.py
-    # fill username and password
 
 
 ## Notes
