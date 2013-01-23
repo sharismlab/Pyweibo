@@ -3,6 +3,9 @@ url = http://localhost
 username = ************
 password = ************
 
+[files]
+path=
+
 [mongo]
 host = 'localhost'
 port = 27017

@@ -4,26 +4,11 @@
 from argparse import ArgumentParser
 import datetime, os, sys
 from ConfigParser import SafeConfigParser
-
-# sys.path.append(os.path.split(sys.argv[0])[0])
-
 import lib.Pyweibo as Pyweibo
-import lib.api.WeiboAPI as WeiboAPI
-
-# from . import token
-# from api import token
-# print os.getcwd()
-
-# from Pyweibo.api import token
 
 #config stuff
-# config = SafeConfigParser()
-# config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
-
-# TEST URLs
-# short = 'http://e.weibo.com/1930665641/zeVxsoiyB'
-# huge = 'http://www.weibo.com/1701401324/zeoBquVKi'
-# python src/main.py http://e.weibo.com/1930665641/zeVxsoiyB -a map
+config = SafeConfigParser()
+config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
 
 
 def main():
@@ -46,7 +31,7 @@ def main():
 
     parser.add_argument('-u', "--url", 
                       help='Select an URL to process', 
-                      dest='URL', 
+                      dest='url', 
                       action='store',
                       metavar='<url>')
 
@@ -127,27 +112,24 @@ def main():
         level = args.level
 
     # Storage
-    if args.db == False:
-        # check if filename 
-        print "Data will be written to local file 'out/data.json' "
+    # if args.db == False:
+    #     # check if filename 
+    #     print "Data will be written to local file 'out/data.json' "
 
-    elif args.db == "mongo":
-        print "Data will be stored to Mongo"
+    # elif args.db == "mongo":
+    #     print "Data will be stored to Mongo"
 
-    elif args.db == "redis":
-        print "Data will be stored to Redis"
+    # elif args.db == "redis":
+    #     print "Data will be stored to Redis"
 
-    # Take actions
-
-    # CRAWLER ACTION
+    # CRAWLER ACTION    
     if args.method == "crawl":
 
-      pyweibo = Pyweibo.Pyweibo() # init
 
       if args.action=="map":
           print "You asked for a repost map of %s"%(args.URL)
           
-          pyweibo.generateRepostMap(args.URL, level, maxposts)
+          crawler.generateRepostMap(args.URL, level, maxposts)
           # print(pyweibo)
 
       elif args.action=="tag":
@@ -161,17 +143,41 @@ def main():
 
     # API ACTIONS
     elif args.method == "api":
-      print ('Get API methods')
-      pyapi = WeiboAPI.WeiboAPI()
+      
+      pyweibo = Pyweibo.Pyweibo() # init
+      # print ('Get API methods')
+      # pyapi = WeiboAPI.WeiboAPI()
 
       # generate token
       if args.action=="token":
         print "Token will be created."
         # print pyapi
-        pyapi.token()
+        pyweibo.getToken()
+
         # PyApi.token()
 
-      
+      if args.action=="comments":
+        # url = "http://www.weibo.com/1701401324/zeoBquVKi" # huge stuff
+        # url = "http://www.weibo.com/2093659437/zfGfH3IyE" # medium size
+        # url = 'http://e.weibo.com/1930665641/zeVxsoiyB' #little thing
+        if args.url:
+          url = args.url
+
+          # get post ID from url
+          postId = pyweibo.getPostIdFromUrl(url)
+          print postId
+          # postId="3537373410886268"
+
+          # get comments data
+          format= "json"
+          filename= nameFile('post_%s'%(postId), format)
+
+          # print filename
+          pyweibo.getComments(postId, filename, format)
+
+        else:
+          parser.error( 'You should input an URL to map using -u <URL>')
+        # 
 
 
       else:
@@ -183,14 +189,15 @@ def main():
 
     print args
 
-if __name__ == '__main__':
-    main()
-
 
 def nameFile(filename,extension):
 
   suffix = datetime.datetime.now().strftime("%y%m%d_%H%M%S")
   host = config.get('files', 'path')
   tmp = "_".join([filename, suffix])
-  name = host+tmp
+  name = host+os.sep+tmp
+  print name
   return name
+
+if __name__ == '__main__':
+    main()

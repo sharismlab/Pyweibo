@@ -1,22 +1,43 @@
 # -*- coding: utf-8 -*-
 
 import weiboCrawler
+import weiboApi
 import visualizationUtil
 import mongoDBUtil
 import ast
+import os
 
 class Pyweibo:
 
-	weiboutil = None
+	weibocrawler = None
+	weiboapi = None
 	visualizationutil = None
 	mongoDButil = None
 
 	def __init__(self):
 		print "Init Pyweibo"
-		self.weiboutil = weiboCrawler.weiboCrawler()
-		self.visualizationutil = visualizationUtil.visualizationUtil()
-		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
 
+		# self.weiboutil = weiboCrawler.weiboCrawler()
+		# self.visualizationutil = visualizationUtil.visualizationUtil()
+		# self.mongoDButil = mongoDBUtil.mongoDBUtil()
+	
+	def getPostIdFromUrl(self, url):
+		self.crawler = weiboCrawler.weiboCrawler()
+		return self.crawler.getIdFromUrl(url)
+
+	
+	# API
+	def getToken(self):
+		self.weiboapi  = weiboApi.weiboApi()
+		self.weiboapi.create_token()
+		return
+
+	def getComments(self, uid, path, format):
+		self.weiboapi  = weiboApi.weiboApi()
+		self.weiboapi.read_tokens()
+		self.weiboapi.mainLoop(path, format)
+        
+	# Crawler
 	def crawlRepost(self, url, level=2, max=100):
 		return	self.weiboutil.getRepost(url, level, max)
 
@@ -39,8 +60,6 @@ class Pyweibo:
 	def saveRepost2Mongo(self, url, level=2, max=100):
 		repost = self.weiboutil.getRepost(url, level, max)
 		self.mongoDButil.saveData(repost, 'repost', 'post')
-
-	
 
 	#analyse the follows and fans data from weiboUtil.getFollows and weiboUtil.getFans
 	#data format will be like [{uid:*, nickname:*}, ...] a dictionary list

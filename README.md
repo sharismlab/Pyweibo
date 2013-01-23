@@ -1,6 +1,6 @@
 # Pyweibo
 
-PyWeibo is a tool for Sina Weibo data extraction, mining and visualization. 
+PyWeibo is a tool for extraction, mining and visualization of Sina Weibo data. 
 
 Main features are :
 
@@ -19,6 +19,13 @@ Main features are :
 Command details are available using help
     
     python pyweibo.py -h
+
+
+### Examples
+
+Retrieve all comments from an URL
+
+    python pyweibo.py api -a comments -u http://www.weibo.com/1701401324/zeoBquVKi
 
 
 You can also use use the bash wrapper on Linux system

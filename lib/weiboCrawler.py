@@ -17,31 +17,32 @@ try:
 	from bs4 import BeautifulSoup
 	import networkx as nx
 	from ConfigParser import ConfigParser
-	# from lxml import etree, html
+	from lxml import etree, html, objectify
+	# import lxml
 
 except ImportError:
 	print >> sys.stderr, """\
 
-There was a problem importing one of the Python modules required to run yum.
-The error leading to this problem was:
+	There was a problem importing one of the Python modules required to run yum.
+	The error leading to this problem was:
 
-%s
+	%s
 
-Please install a package which provides this module, or
-verify that the module is installed correctly.
+	Please install a package which provides this module, or
+	verify that the module is installed correctly.
 
-It's possible that the above module doesn't match the current version of Python,
-which is:
+	It's possible that the above module doesn't match the current version of Python,
+	which is:
 
-%s
+	%s
 
-""" % (sys.exc_value, sys.version)
+	""" % (sys.exc_value, sys.version)
 	sys.exit(1)
 
 reload(sys)
 sys.setdefaultencoding('utf-8')
 
-class weiboUtil:
+class weiboCrawler:
 
 	#login stuff
 	cj = cookielib.LWPCookieJar()
@@ -81,9 +82,7 @@ class weiboUtil:
 		# config.read('../settings.cfg')
 		username = config.get('login', 'username')
 		pw = config.get('login', 'password')
-		
-		print config.get('login', 'username')
-
+		# print config.get('login', 'username')
 		self.login(username, pw)
 
 	#login fun
@@ -405,6 +404,21 @@ class weiboUtil:
 
 		return murl
 
+	def getIdFromUrl(self, url):
+		myId = ''
+
+		print 'url is ' + url
+		page = urllib2.urlopen(url).read()
+		content = page.partition('{\"pid\":\"pl_content_weiboDetail\"')  
+
+		jsonData = content[2].partition(')</script>')[0]
+		jsonData = content[1] + jsonData
+		htmlData = json.loads(jsonData)['html']
+		
+		doc = html.fromstring(htmlData)
+		postId = doc.xpath("//div[contains(@node-type,'weibo_info')]/@mid")
+		return str(postId[0])
+	
 	def getRepost(self, url, level=2, max=100):
 		self.getRepostWorker(url, level, True, max)
 		level = level - 1
