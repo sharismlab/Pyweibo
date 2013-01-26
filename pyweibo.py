@@ -163,8 +163,8 @@ def main():
           url = args.url
 
           # get post ID from url
-          postId = pyweibo.getPostIdFromUrl(url)
-          # print postId
+          # postId = pyweibo.getPostIdFromUrl(url)
+          postId ="3534311687371818"
 
           # get comments data
           format= "json"

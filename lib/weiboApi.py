@@ -6,6 +6,7 @@ import csv, io
 import fileinput
 import getpass
 import pickle
+import datetime
 from api.weibo import APIClient # api from:http://michaelliao.github.com/sinaweibopy/
 from api.http_helper import *
 from api.retry import *
@@ -25,6 +26,37 @@ default_encoding = 'utf-8'
 if sys.getdefaultencoding() != default_encoding:
     reload(sys)
     sys.setdefaultencoding(default_encoding)
+
+
+
+# class WeiboUser:
+
+#     def __init__(self, tupleToken):
+#         self.username = tupleToken[0]
+#         self.token= tupleToken[1]
+#         self.secret= tupleToken[2]
+#         self.alarm = 0  #time to wake up
+#         self.sleeping = False
+
+#     def getToken(self):
+#         return [self.token, self.secret]
+
+#     def getSleeping(self):
+#         return self.sleeping
+
+#     def getRemaining(self):
+#         diff= alarm - datetime.datetime.now()
+#         diff = int( round( diff.total_seconds() ) ) 
+#         return diff
+#         # return self.remains
+
+#     def toSleep(self, t):
+
+#         print('现在 '+self.username+' 会睡眠'+str(t)+" 秒钟，直到下一个整点重新恢复运行")
+#         t = t+1
+
+#         self.alarm = datetime.datetime.now()+ datetime.timedelta(0,t)
+#         self.sleeping = True
 
 
 class weiboApi:
@@ -164,13 +196,16 @@ class weiboApi:
         # print json.dumps(status)
 
     def read_tokens(self):
-        tokens  = [line.split() for line in open(self.access_token_file_path, 'r')]
+        tokens  = [ tuple(line.split()) for line in open(self.access_token_file_path, 'r')]
+        # tokens  = tuple(x) for x in tokens
         print tokens
         return tokens
 
     # Deal with limitations
     def remainHit(self):
         statu = self.client.account__rate_limit_status()
+        # print statu
+        # return 0
         return statu['remaining_user_hits']
     
     def resetTime(self):
@@ -213,10 +248,16 @@ class weiboApi:
             else :
                 print "Unknown format. 格式不存在" 
 
-    # Allow several tokens from a tupple 
+    # Use several users to get more data 
+    # def setUser(self, weiboUser):
+    #     token = weiboUser.getToken()
+    #     self.client.set_access_token(token[0], token[1] )
+
+    #     return weiboUser
+
     def setToken(self,tokenTuple):
 
-        self.client.set_access_token(tokenTuple[0],tokenTuple[1])
+        self.client.set_access_token(tokenTuple[1],tokenTuple[2])
 
     def tokenLoop(self, maxPages):
         maxPages = maxPages
@@ -244,7 +285,7 @@ class weiboApi:
 
     def mainLoop(self, command, uid, path, format ):
         maxPages = 0
-        tokenArray= self.read_tokens()
+
 
         # check if the directory exist before writing
         if os.path.isdir(path) == False:
@@ -256,39 +297,93 @@ class weiboApi:
             else:
                 print("Data can't be stored, please create a directory!")
 
+        # Import all tokens
+        tokenArray= self.read_tokens()
 
-        # Assign user
-        token = tokenArray[0]
-        self.setToken(token)
+        # weiboUsers = []
+        # Create and assign users
+        # for token in tokenArray:
+            # weiboUsers.append(WeiboUser(token))
+        
+        # print weiboUsers
+
+        # Set first user to start
+        # currentUser = self.setUser(weiboUsers[0])
+
+        # tmp set token 
+        self.setToken(tokenArray[0])
         
         # get basic data about the post
         print("retrieve post info from API")
         self.getPost(uid, path, format)
 
         # Count maximum pages to retrieve
-        maxPages = self.maxpage(command,uid, 50) # 50 items per page
+        maxPages = self.maxpage(command,uid, 50)# 50 items per page
         print maxPages,"pages to retrieve"
         
         index = 0
 
         while index < len(tokenArray) and maxPages>0: 
+            
             self.setToken(tokenArray[index])
+            print "New user coming!"
+
 
             if self.remainHit()>0: # check rate limit
+
                 while maxPages > 0: # check page number
+
                     if self.remainHit()>0:
+
                         JSONOBJ = self.result(command,uid,maxPages)
-                        type(JSONOBJ)
-                        print maxPages
+                        # type(JSONOBJ)
+                        print "page "+str(maxPages)+" extracted to "+command+"_"+str(maxPages)
                         maxPages = maxPages-1
                         self.toFile(JSONOBJ,command+"_"+str(maxPages), path, format)
+
                     else:
+                        
                         if index==len(tokenArray)-1:
-                            self.toSleep()
+                            toSleep()
                             index=0
                         else:
                             index=index+1
                             break
+
+                        # print  "len(weiboUsers)"
+                        # if index==len(weiboUsers)-1:
+
+                        #     # Put your worker in bed
+                        #     currentUser.toSleep(resetTime())
+                            
+                        #     # Get sleepy worker index 
+                        #     nextUser = weiboUsers.index(currentUser)+1
+
+                        #     # Check if you have used all workers already
+                        #     if  len(weiboUsers) >= nextUser:
+                                
+                        #         if weiboUsers.getSleeping == False:
+                        #             currentUser = setUser(weiboUsers[nextUser])
+
+                        #     else:
+
+                        #         # Check if some other workers are awake already
+                        #         for user in weiboUsers:
+                        #             alarms = []
+                                    
+                        #             if(user.getSleeping== False):
+                        #                 currentUser = setUser(user) # Awake! Get to work
+                        #             else:
+
+                        #                 alarms.append(user.getRemaining)
+                        #                 print max(alarms)
+                        #                 print('All your guys are sleeping. Now you should just rest!')
+                        #                 self.toSleep()
+
+                        #     index=0
+                        # else:
+                        #     index=index+1
+                        #     break
             else:
                 index = index+maxPages-1
 
