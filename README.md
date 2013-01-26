@@ -11,6 +11,9 @@ Main features are :
 * Text mining and keyword extraction
 * Sentiment analysis (to do)
 
+## Install
+
+    python setup.py install
 
 ## Usage
 

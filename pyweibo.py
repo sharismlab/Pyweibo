@@ -6,6 +6,8 @@ import datetime, os, sys
 from ConfigParser import SafeConfigParser
 import lib.Pyweibo as Pyweibo
 
+# sys.modules.keys()​​​
+
 #config stuff
 config = SafeConfigParser()
 config.read( os.path.join(os.getcwd() + os.sep +  'settings.py') )
