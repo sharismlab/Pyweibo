@@ -36,6 +36,7 @@ def main():
                       metavar='<url>')
 
     # Storage
+    '''
     parser.add_argument("-d", "--datatype",
                       action="store",
                       dest="db",
@@ -71,7 +72,8 @@ def main():
                       help="Maximum number of posts to crawl",
                       type=int,
                       metavar='<graphtype>')
-
+    '''
+    
     args = parser.parse_args()
 
 
@@ -144,7 +146,8 @@ def main():
 
     # API ACTIONS
     elif args.method == "api":
-      
+      # print sys.modules
+
       pyweibo = Pyweibo.Pyweibo() # init
       # print ('Get API methods')
       # pyapi = WeiboAPI.WeiboAPI()

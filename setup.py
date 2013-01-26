@@ -18,12 +18,16 @@ setup(
     keywords = "crawler visualization weibo memes",
     url = "https://github.com/sharismlab/Pyweibo",
     packages = find_packages('python'),
-    package_dir = {'':'python'},
+    package_dir = {'':'lib'},
     long_description=read('README.md'),
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Topic :: Utilities",
         "License :: OSI Approved :: BSD License",
+    ],
+    install_requires=[
+        'setuptools',
+        'greenlet',
     ],
     include_package_data=True,
     package_data = {
