@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #/usr/bin/env python
 
-import sys, os, urllib, urllib2
+import sys, os, urllib, urllib2, fnmatch
 import csv, io
 import fileinput
 import getpass
@@ -283,10 +283,17 @@ class weiboApi:
         print total_number,' total_number'
         return (total_number/perpage) if (total_number%perpage==0) else (total_number/perpage+1)
 
-    def mainLoop(self, command, uid, path, format ):
+
+    # MAIN LOOP
+    # ex. 
+    # command = statuses__show
+    # uid = weibo post id
+    # path = output folder
+    # format : json or csv
+    
+    def mainLoop(self, command, uid, path, format="json",since_page=0 ):
         maxPages = 0
-
-
+       
         # check if the directory exist before writing
         if os.path.isdir(path) == False:
 
@@ -300,16 +307,6 @@ class weiboApi:
         # Import all tokens
         tokenArray= self.read_tokens()
 
-        # weiboUsers = []
-        # Create and assign users
-        # for token in tokenArray:
-            # weiboUsers.append(WeiboUser(token))
-        
-        # print weiboUsers
-
-        # Set first user to start
-        # currentUser = self.setUser(weiboUsers[0])
-
         # tmp set token 
         self.setToken(tokenArray[0])
         
@@ -322,9 +319,14 @@ class weiboApi:
         print maxPages,"pages to retrieve"
         
         index = 0
+        
+        if(since_page!=0):
+            print( '''Resuming data extraction... 
+                Already %s extracted''', (str(since_page)) )
+            maxPages = since_page
 
         while index < len(tokenArray) and maxPages>0: 
-            
+            # print "index" +str(index)
             self.setToken(tokenArray[index])
             print "New user coming!"
 
@@ -337,6 +339,7 @@ class weiboApi:
 
                         JSONOBJ = self.result(command,uid,maxPages)
                         # type(JSONOBJ)
+                        # print 'since_id="'+since_id
                         print "page "+str(maxPages)+" extracted to "+command+"_"+str(maxPages)
                         maxPages = maxPages-1
                         self.toFile(JSONOBJ,command+"_"+str(maxPages), path, format)
@@ -390,10 +393,11 @@ class weiboApi:
     # API requests
 
 
-    def result(self,command,uid, page):
+    def result(self,command,uid, page, since_id="None"):
         # Api requests goes there
         re = None
-
+        if since_id != "None":
+            since_id = long(since_id)
         if command == "coms":
             # GET comments/show
             re = self.client.comments__show(id=uid, page=page, count=50)
@@ -422,3 +426,5 @@ class weiboApi:
     #     # end = stringTotime(ENDTIME)
     #     re = api.place__nearby_timeline(lat=lat,long=lon,starttime=start,endtime=end,page=page,count=count,range=rang)
     #     return re
+
+

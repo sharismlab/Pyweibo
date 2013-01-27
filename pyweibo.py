@@ -161,8 +161,10 @@ def main():
         pyweibo.getToken()
 
         # PyApi.token()
+      elif args.action=="resume":
+        pyweibo.resumePostData()
 
-      if args.action=="coms" or args.action=="RT":
+      elif args.action=="coms" or args.action=="RT":
 
         if args.url:
           url = args.url

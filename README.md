@@ -51,10 +51,14 @@ Retrieve all reposts from a post URL
 
     python pyweibo.py api -a RT -u http://www.weibo.com/2820349024/zfGX5f0bN
 
+Resume API extraction
+
+    python pyweibo.py api -a resume (useful if API has failed)
 
 Generate repost map (.dot graph file) from a post URL
 
     python pyweibo.py crawl -a map -u http://www.weibo.com/2820349024/zfGX5f0bN
+
 
 
 You can also use use the bash wrapper on Linux system
