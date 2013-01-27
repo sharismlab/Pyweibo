@@ -3,7 +3,7 @@
 import weiboCrawler
 import weiboApi
 import visualizationUtil
-import mongoDBUtil
+# import mongoDBUtil
 import ast
 import os
 

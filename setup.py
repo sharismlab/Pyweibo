@@ -26,36 +26,35 @@ setup(
         "License :: OSI Approved :: BSD License",
     ],
     install_requires=[
-        'bs4',
-        'base64',
-        'ConfigParser',
-        'cookielib',
-        'cStringIO',
-        'getpass',
+        'beautifulsoup4',
+        # 'base64',
+        # 'ConfigParser',
+        # 'cookielib',
+        # 'cStringIO',
+        # 'getpass',
         'greenlet',
-        'gzip', 
-        'hashlib',
+        # 'gzip', 
+        # 'hashlib',
         'jieba',
         'logging', 
         'lxml',
-        'mimetypes',
-        'math',
-        'ast',
-        'multiprocessing',
+        # 'mimetypes',
+        # 'math',
+        # 'ast',
+        # 'multiprocessing',
         'networkx',
-        'pickle',
+        # 'pickle',
         'pymongo',
-        'sys',
-        're',
-        'topia',
-        'urllib2', 
-        'webbrowser',
-        'weibo',
+        # 'sys',
+        # 're',
+        'topia.termextract',
+        # 'sinaweibopy',
 
-    ],
-    include_package_data=True,
-    package_data = {
-        # If any package contains *.txt or *.rst files, include them:
-        '': ['*.txt']
-    }
+    ]
+    # ,
+    # include_package_data=True,
+    # package_data = {
+    #     # If any package contains *.txt or *.rst files, include them:
+    #     '': ['*.txt']
+    # }
 )

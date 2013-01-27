@@ -13,7 +13,19 @@ Main features are :
 
 ## Install
 
+Install dependencies
+
     python setup.py install
+
+For Windows users, you may need [MinGW | http://www.mingw.org/wiki/Getting_Started]
+
+    setup.py install build ––compiler=mingw32
+
+You should create a config file and input your weibo login & API credentials
+
+    cp settings.py.copy settings.py
+
+
 
 ## Usage
 
@@ -23,9 +35,6 @@ Command details are available using help
     
     python pyweibo.py -h
 
-You should create a config file and input your weibo credentials
-
-    cp settings.py.copy settings.py
 
 To use Weibo API, you will need first to generate your token. The token will be stored in lib/api/access_token.txt
 

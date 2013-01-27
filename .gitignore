@@ -170,3 +170,6 @@ pip-log.txt
 settings.py
 lib/api/access_token.txt
 out/*
+PyWeibo.egg-info/
+dist/
+build/
