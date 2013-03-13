@@ -215,7 +215,8 @@ class weiboApi:
     def toSleep(self):
         t = self.resetTime()
         t = t+1
-        print('现在程序会睡眠'+str(t)+" 秒钟，直到下一个整点重新恢复运行")
+        # print('现在程序会睡眠'+str(t)+" 秒钟，直到下一个整点重新恢复运行")
+        print('Now the program will sleep during '+str(t)+" seconds and then continue its job")
         time.sleep(t)
 
     def stringTotime(self, strtime):#时间格式"2012-10-20 1:2:2"
@@ -308,87 +309,90 @@ class weiboApi:
         tokenArray= self.read_tokens()
 
         # tmp set token 
-        self.setToken(tokenArray[0])
-        
-        # get basic data about the post
-        print("retrieve post info from API")
-        self.getPost(uid, path, format)
-
-        # Count maximum pages to retrieve
-        maxPages = self.maxpage(command,uid, 50)# 50 items per page
-        print maxPages,"pages to retrieve"
-        
         index = 0
+        # self.setToken(tokenArray[0])
+        self.setToken(tokenArray[index])
+        
         
         if(since_page!=0):
             print( '''Resuming data extraction... 
                 Already %s extracted''', (str(since_page)) )
             maxPages = since_page
+        else:
+            # get basic data about the post
+            print("retrieve post info from API")
+            self.getPost(uid, path, format)
 
-        while index < len(tokenArray) and maxPages>0: 
+            # Count maximum pages to retrieve
+            maxPages = self.maxpage(command,uid, 50)# 50 items per page
+        
+        print maxPages,"pages to retrieve"
+
+        # while index < len(tokenArray) and maxPages>0: 
+        while maxPages>0: 
             # print "index" +str(index)
-            self.setToken(tokenArray[index])
-            print "New user coming!"
+            # self.setToken(tokenArray[index])
+            # print "New user coming!"
+            # print self.remainHit()
+            # if self.remainHit()>0: # check rate limit
 
+            # while maxPages > 0: # check page number
 
-            if self.remainHit()>0: # check rate limit
+            if self.remainHit()>0:
 
-                while maxPages > 0: # check page number
+                JSONOBJ = self.result(command,uid,maxPages)
+                # type(JSONOBJ)
+                # print 'since_id="'+since_id
+                print "page "+str(maxPages)+" extracted to "+command+"_"+str(maxPages)
+                maxPages = maxPages-1
+                self.toFile(JSONOBJ,command+"_"+str(maxPages), path, format)
 
-                    if self.remainHit()>0:
-
-                        JSONOBJ = self.result(command,uid,maxPages)
-                        # type(JSONOBJ)
-                        # print 'since_id="'+since_id
-                        print "page "+str(maxPages)+" extracted to "+command+"_"+str(maxPages)
-                        maxPages = maxPages-1
-                        self.toFile(JSONOBJ,command+"_"+str(maxPages), path, format)
-
-                    else:
-                        
-                        if index==len(tokenArray)-1:
-                            toSleep()
-                            index=0
-                        else:
-                            index=index+1
-                            break
-
-                        # print  "len(weiboUsers)"
-                        # if index==len(weiboUsers)-1:
-
-                        #     # Put your worker in bed
-                        #     currentUser.toSleep(resetTime())
-                            
-                        #     # Get sleepy worker index 
-                        #     nextUser = weiboUsers.index(currentUser)+1
-
-                        #     # Check if you have used all workers already
-                        #     if  len(weiboUsers) >= nextUser:
-                                
-                        #         if weiboUsers.getSleeping == False:
-                        #             currentUser = setUser(weiboUsers[nextUser])
-
-                        #     else:
-
-                        #         # Check if some other workers are awake already
-                        #         for user in weiboUsers:
-                        #             alarms = []
-                                    
-                        #             if(user.getSleeping== False):
-                        #                 currentUser = setUser(user) # Awake! Get to work
-                        #             else:
-
-                        #                 alarms.append(user.getRemaining)
-                        #                 print max(alarms)
-                        #                 print('All your guys are sleeping. Now you should just rest!')
-                        #                 self.toSleep()
-
-                        #     index=0
-                        # else:
-                        #     index=index+1
-                        #     break
             else:
-                index = index+maxPages-1
+                print ("You just hit the API limit rate.")
+                # if index==len(tokenArray)-1:
+                self.toSleep()
+                # index=index+1
+                    # index=0
+                # else:
+                
+                    # break
+
+                    # print  "len(weiboUsers)"
+                    # if index==len(weiboUsers)-1:
+
+                    #     # Put your worker in bed
+                    #     currentUser.toSleep(resetTime())
+                        
+                    #     # Get sleepy worker index 
+                    #     nextUser = weiboUsers.index(currentUser)+1
+
+                    #     # Check if you have used all workers already
+                    #     if  len(weiboUsers) >= nextUser:
+                            
+                    #         if weiboUsers.getSleeping == False:
+                    #             currentUser = setUser(weiboUsers[nextUser])
+
+                    #     else:
+
+                    #         # Check if some other workers are awake already
+                    #         for user in weiboUsers:
+                    #             alarms = []
+                                
+                    #             if(user.getSleeping== False):
+                    #                 currentUser = setUser(user) # Awake! Get to work
+                    #             else:
+
+                    #                 alarms.append(user.getRemaining)
+                    #                 print max(alarms)
+                    #                 print('All your guys are sleeping. Now you should just rest!')
+                    #                 self.toSleep()
+
+                    #     index=0
+                    # else:
+                    #     index=index+1
+                    #     break
+            # else:
+            #     index = index+maxPages-1
 
     # API requests
 

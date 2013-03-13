@@ -1,6 +1,6 @@
 #testMongo.py
 
-import mongoDBUtil
+import lib.mongoDBUtil as mongoDBUtil
 import datetime
 import json
 
@@ -13,4 +13,4 @@ data = [{"author": "Mike",
 # obj = json.loads(data)
 
 mongoDButil = mongoDBUtil.mongoDBUtil()
-mongoDButil.saveData(data, 'blabla', 'test')
+mongoDButil.saveData(data, "blabla",'test')

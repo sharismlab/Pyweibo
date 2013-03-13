@@ -25,10 +25,6 @@ You should create a config file and input your weibo login & API credentials
 
     cp settings.py.copy settings.py
 
-To use Weibo API, you will need first to generate your token. The token will be stored in lib/api/access_token.txt
-
-    python pyweibo.py api -a token
-
 
 ## Usage
 
@@ -38,6 +34,20 @@ Command details are available using help
     
     python pyweibo.py -h
 
+You can also use use the bash wrapper on Linux system
+
+    $ ./bin/pyweibo
+
+
+# Sina Weibo API
+
+To use Weibo API
+
+1) generate your token. The token will be stored in lib/api/access_token.txt
+
+    python pyweibo.py api -a token
+
+2) input a command
 
 
 ### Examples
@@ -51,9 +61,13 @@ Retrieve all reposts from a post URL
 
     python pyweibo.py api -a RT -u http://www.weibo.com/2820349024/zfGX5f0bN
 
-Resume API extraction
 
-    python pyweibo.py api -a resume (useful if API has failed)
+Resume API extraction (useful if API has failed)
+
+    python pyweibo.py api -a resume 
+
+
+# Sina Weibo Crawler
 
 Generate repost map (.dot graph file) from a post URL
 
@@ -61,9 +75,7 @@ Generate repost map (.dot graph file) from a post URL
 
 
 
-You can also use use the bash wrapper on Linux system
 
-    $ ./bin/pyweibo
 
 
 ## Notes

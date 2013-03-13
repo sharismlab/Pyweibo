@@ -51,9 +51,7 @@ class Pyweibo:
         my_folder = self.selectFromFolder(self.OUTPUT_PATH)
         fetchInfo = self.resumeFetchData(self.OUTPUT_PATH,my_folder)
         print fetchInfo
-        self.weiboapi.mainLoop(fetchInfo[0], fetchInfo[1], my_folder, since_page=fetchInfo[2])
-        
-
+        self.weiboapi.mainLoop(fetchInfo[0], fetchInfo[1], self.OUTPUT_PATH+os.sep+my_folder, since_page=fetchInfo[2])
 
     # Crawler
     def crawlRepost(self, url, level=2, max=100):
@@ -92,6 +90,8 @@ class Pyweibo:
     #topN of fans(follows)'s school(all? male? female)
     #topN of fans(follows)'s company(all? male? female)
     #...
+
+    
     def analyseFollowsFansInfo(self, uid, F='follow'):
         follows = self.weibocrawler.getFollows(uid)
         fans = self.weibocrawler.getFans(uid)
