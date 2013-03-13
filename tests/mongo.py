@@ -1,4 +1,6 @@
-#testMongo.py
+'''
+Test write / read on mongoDB
+'''
 
 import lib.mongoDBUtil as mongoDBUtil
 import datetime
@@ -10,7 +12,7 @@ data = [{"author": "Mike",
          "date": datetime.datetime.utcnow()
          }]
 
-# obj = json.loads(data)
 
 mongoDButil = mongoDBUtil.mongoDBUtil()
+
 mongoDButil.saveData(data, "blabla",'test')
